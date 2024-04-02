@@ -73,29 +73,28 @@ async def read_student(student_id: int) -> ApiTypes.Student:
     return resources['crud'].get_single(Models.Student, student_id)
 
 
-@app.post('/students/{student_id}/{points}')
-def update_student_points(student_id: int, points: int) -> ApiTypes.Student:
-    current_points = resources['crud'].get_single(
-        Models.Student, student_id).points
-    return resources['crud'].update(
-        Models.Student, student_id, {'points': current_points + points})
+@app.get('/students/gender/{gender}')
+async def get_students(gender: str) -> List[ApiTypes.Student]:
+    students = resources['crud'].get(Models.Student)
+    return [student for student in students if student.gender == gender]
 
 
 @app.post('/students')
-async def create_student(student: ApiTypes.StudentNoID) -> ApiTypes.Student:
-    return resources['crud'].create(Models.Student, student.model_dump())
-
-
-@app.delete('/students/{student_id}')
-async def delete_student(student_id: int) -> ApiTypes.Student:
-    return resources['crud'].delete(Models.Student, student_id)
+async def create_student(student: ApiTypes.Student) -> ApiTypes.Student:
+    return resources['crud'].create(Models.Student, student)
 
 
 @app.put('/students/{student_id}')
 async def update_student(student_id: int,
                          student: ApiTypes.StudentNoID) -> ApiTypes.Student:
-    return resources['crud'].update(
-        Models.Student, student_id, student.model_dump())
+    return resources['crud'].update(Models.Student,
+                                    student_id,
+                                    student.model_dump())
+
+
+@app.delete('/students/{student_id}')
+async def delete_student(student_id: int) -> None:
+    return resources['crud'].delete(Models.Student, student_id)
 
 
 if __name__ == '__main__':
