@@ -63,7 +63,8 @@ async def read_main():
 async def read_students(sort_by: str = None,
                         search: str = None) -> List[ApiTypes.Student]:
     if search:
-        return resources['crud'].search(Models.Student, search)
+        return resources['crud'].search(
+            Models.Student, ['name', 'surname', 'classes'], search)
     else:
         return resources['crud'].get(Models.Student, sort_by)
 

@@ -1,6 +1,7 @@
 import logging
 
 from typing import List
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
 from crud.models import Base, Student
@@ -30,11 +31,15 @@ class Crud:
                search_term: str) -> List[Base]:
         self._check_model(model)
         with Session(self._engine) as session:
+            # get all matching rows. separate the search term by spaces
+            # and search for each word in the columns
+            search_terms = search_term.split(' ')
             query = session.query(model)
-            for column in columns:
-                query = query.filter(
-                    getattr(model, column).like(f"%{search_term}%"))
-        return query.all()
+            for term in search_terms:
+                or_conditions = [getattr(model, column).ilike(f"%{term}%")
+                                 for column in columns]
+                query = query.filter(or_(*or_conditions))
+            return query.all()
 
     def create(self, model: Base, data: dict) -> Base:
         self._check_model(model)
