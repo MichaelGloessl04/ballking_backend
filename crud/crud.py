@@ -31,8 +31,6 @@ class Crud:
                search_term: str) -> List[Base]:
         self._check_model(model)
         with Session(self._engine) as session:
-            # get all matching rows. separate the search term by spaces
-            # and search for each word in the columns
             search_terms = search_term.split(' ')
             query = session.query(model)
             for term in search_terms:
