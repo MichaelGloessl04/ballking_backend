@@ -1,5 +1,3 @@
-import uvicorn
-
 from typing import List
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -43,8 +41,8 @@ app = FastAPI(lifespan=lifespan,
 
 origins = [
     "http://localhost",
-    "http://localhost:5173",
-    "http://localhost:5173/",
+    "http://localhost:5001",
+    "http://localhost:5001/",
 ]
 
 app.add_middleware(
@@ -62,19 +60,17 @@ async def read_main():
 
 
 @app.get('/students')
-async def read_students() -> List[ApiTypes.Student]:
-    return resources['crud'].get(Models.Student)
+async def read_students(sort_by: str = None,
+                        search: str = None) -> List[ApiTypes.Student]:
+    if search:
+        return resources['crud'].search(Models.Student, search)
+    else:
+        return resources['crud'].get(Models.Student, sort_by)
 
 
 @app.get('/students/{student_id}')
 async def read_student(student_id: int) -> ApiTypes.Student:
     return resources['crud'].get_single(Models.Student, student_id)
-
-
-@app.get('/students/search')
-async def search_students(columns: List[str],
-                          search_term: str) -> List[ApiTypes.Student]:
-    return resources['crud'].search(Models.Student, columns, search_term)
 
 
 @app.post('/students/{student_id}/{points}')
@@ -103,4 +99,5 @@ async def update_student(student_id: int,
 
 
 if __name__ == '__main__':
+    import uvicorn
     uvicorn.run("main:app", host='0.0.0.0', port=5000, reload=True)

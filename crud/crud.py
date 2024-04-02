@@ -11,10 +11,13 @@ class Crud:
         self._engine = engine
         Base.metadata.create_all(self._engine)
 
-    def get(self, model: Base) -> List[Base]:
+    def get(self, model: Base, sort_by: str = None) -> List[Base]:
         self._check_model(model)
         with Session(self._engine) as session:
-            return session.query(model).all()
+            query = session.query(model)
+            if sort_by:
+                query = query.order_by(getattr(model, sort_by))
+            return query.all()
 
     def get_single(self, model: Base, id: int) -> Base:
         self._check_model(model)

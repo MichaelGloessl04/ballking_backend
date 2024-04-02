@@ -12,5 +12,6 @@ class Student(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
     surname = Column(String, index=True)
+    gender = Column(String, index=True)
     classes = Column(String, index=True)
     points = Column(Integer, index=True)
