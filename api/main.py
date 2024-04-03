@@ -41,8 +41,8 @@ app = FastAPI(lifespan=lifespan,
 
 origins = [
     "http://localhost",
-    "http://localhost:5001",
-    "http://localhost:5001/",
+    "http://localhost:5000",
+    "http://localhost:5000/",
 ]
 
 app.add_middleware(
@@ -100,4 +100,4 @@ async def delete_student(student_id: int) -> None:
 
 if __name__ == '__main__':
     import uvicorn
-    uvicorn.run("main:app", host='0.0.0.0', port=5000, reload=True)
+    uvicorn.run("main:app", host='0.0.0.0', port=5001, reload=True)
